@@ -1,6 +1,10 @@
+import time
 from collections.abc import Callable
+from datetime import datetime
 from typing import Any
+
 from fastapi import Request, Response
+from loguru import logger
 from starlette.middleware.base import BaseHTTPMiddleware
 
 
@@ -17,6 +21,11 @@ class LoggerMiddleware(BaseHTTPMiddleware):
         :param call_next: Endpoint or next middleware to be called (if any, this is the next middleware in the chain of middlewares, it is supplied by FastAPI)
         :return: Response from endpoint
         """
-        # TODO:(Member) Finish implementing this method
-        response = await call_next(request)
-        return response
+        start_time = time.perf_counter()  # record the time before the request is processed
+        logger.info(f"Request  | {request.method} {request.url.path} | params: {dict(request.query_params)} | time: {datetime.now()}")  # log the incoming request
+
+        response = await call_next(request)  # pass the request to the next middleware/endpoint and wait for the response
+
+        duration = time.perf_counter() - start_time  # calculate the difference in times logged to get duration
+        logger.info(f"Response | {request.method} {request.url.path} | status: {response.status_code} | duration: {duration:.4f}s")  # log the outgoing response
+        return response  # return the response back to the client
