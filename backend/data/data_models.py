@@ -36,14 +36,17 @@ class MainCommand(BaseSQLModel, table=True):
         if self.params is None and self.format is None:
             return self # case 1
         
-        if self.params is None or self.format is None:
+        if self.params is None and self.format is not None:
+            raise ValueError("params and format must both be None or both be provided.")
+        
+        if self.params is not None and self.format is None:
             raise ValueError("params and format must both be None or both be provided.")
         
         params_list = self.params.split(",")
         format_list = self.format.split(",")
 
         if len(params_list) != len(format_list):
-            raise ValueError("params and format must both be None or both be provided.")
+            raise ValueError("params and format list lengths do not match.")
 
         return self # case 2
 

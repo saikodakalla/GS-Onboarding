@@ -22,7 +22,7 @@ class LoggerMiddleware(BaseHTTPMiddleware):
         :return: Response from endpoint
         """
         start_time = time.perf_counter()  # record the time before the request is processed
-        logger.info(f"Request  | {request.method} {request.url.path} | params: {dict(request.query_params)} | time: {datetime.now()}")  # log the incoming request
+        logger.info(f"Request  | {request.method} {request.url.path} | params: {dict(request.query_params)} | time: {start_time}")  # log the incoming request
 
         response = await call_next(request)  # pass the request to the next middleware/endpoint and wait for the response
 
